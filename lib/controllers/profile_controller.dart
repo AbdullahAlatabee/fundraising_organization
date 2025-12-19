@@ -7,7 +7,6 @@ import 'auth_controller.dart';
 import 'dart:io';
 
 class ProfileController extends GetxController {
-  final AuthController _authController = Get.find<AuthController>();
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;
 
   final TextEditingController nameController = TextEditingController();
@@ -20,15 +19,23 @@ class ProfileController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadUserData();
+    // Delay to ensure AuthController is ready
+    Future.delayed(Duration.zero, () {
+      _loadUserData();
+    });
   }
 
   void _loadUserData() {
-    final user = _authController.currentUser.value;
-    if (user != null) {
-      nameController.text = user.name;
-      emailController.text = user.email;
-      imagePath.value = user.imagePath;
+    try {
+      final authController = Get.find<AuthController>();
+      final user = authController.currentUser.value;
+      if (user != null) {
+        nameController.text = user.name;
+        emailController.text = user.email;
+        imagePath.value = user.imagePath;
+      }
+    } catch (e) {
+      print('Error loading user data: $e');
     }
   }
 
@@ -49,28 +56,36 @@ class ProfileController extends GetxController {
 
   Future<void> saveProfile() async {
     if (nameController.text.isEmpty) {
-      Get.snackbar('Error', 'Name is required');
+      Get.snackbar('error'.tr, 'name_required'.tr);
       return;
     }
     
-    isLoading.value = true;
-    final currentUser = _authController.currentUser.value;
-    if (currentUser != null) {
-      final updatedUser = User(
-        id: currentUser.id,
-        name: nameController.text.trim(),
-        email: currentUser.email, // Email usually not editable or complex
-        password: currentUser.password,
-        role: currentUser.role,
-        createdAt: currentUser.createdAt,
-        imagePath: imagePath.value,
-      );
+    try {
+      isLoading.value = true;
+      final authController = Get.find<AuthController>();
+      final currentUser = authController.currentUser.value;
       
-      await _dbHelper.updateUser(updatedUser);
-      _authController.currentUser.value = updatedUser; // Update global state
-      isEditing.value = false;
-      Get.snackbar('Success', 'Profile updated');
+      if (currentUser != null) {
+        final updatedUser = User(
+          id: currentUser.id,
+          name: nameController.text.trim(),
+          email: currentUser.email,
+          password: currentUser.password,
+          role: currentUser.role,
+          createdAt: currentUser.createdAt,
+          imagePath: imagePath.value,
+        );
+        
+        await _dbHelper.updateUser(updatedUser);
+        authController.currentUser.value = updatedUser;
+        isEditing.value = false;
+        Get.snackbar('success'.tr, 'profile_updated'.tr);
+      }
+    } catch (e) {
+      Get.snackbar('error'.tr, 'update_failed'.tr);
+      print('Error saving profile: $e');
+    } finally {
+      isLoading.value = false;
     }
-    isLoading.value = false;
   }
 }

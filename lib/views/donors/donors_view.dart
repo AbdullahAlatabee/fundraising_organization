@@ -3,13 +3,15 @@ import 'package:get/get.dart';
 import '../../controllers/donor_controller.dart';
 import '../../routes/app_routes.dart';
 
-class DonorsView extends GetView<DonorController> {
-  final TextEditingController searchController = TextEditingController();
-
+class DonorsView extends StatelessWidget {
   DonorsView({Key? key}) : super(key: key);
+  
+  final TextEditingController searchController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<DonorController>();
+    
     return Column(
       children: [
         Padding(

@@ -5,7 +5,7 @@ import '../core/constants/app_keys.dart';
 
 class SettingsController extends GetxController {
   var isDarkMode = false.obs;
-  var currentLocale = Locale('en', 'US').obs;
+  var currentLocale = Locale('ar', 'SA').obs; // Arabic as default
 
   @override
   void onInit() {
@@ -26,12 +26,17 @@ class SettingsController extends GetxController {
       Get.changeThemeMode(ThemeMode.light);
     }
 
-    // Language
+    // Language - default to Arabic if not set
     String? lang = prefs.getString(AppKeys.language);
-    if (lang == 'ar') {
-      currentLocale.value = Locale('ar', 'SA');
-    } else {
+    if (lang == 'en') {
       currentLocale.value = Locale('en', 'US');
+    } else {
+      // Default to Arabic
+      currentLocale.value = Locale('ar', 'SA');
+      if (lang == null) {
+        // Save Arabic as default on first run
+        await prefs.setString(AppKeys.language, 'ar');
+      }
     }
     Get.updateLocale(currentLocale.value);
   }

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'routes/app_pages.dart';
-import 'routes/app_routes.dart';
+// import 'routes/app_routes.dart';
 import 'bindings/initial_binding.dart';
 import 'themes/app_theme.dart';
 import 'translations/app_translations.dart';
-import 'controllers/settings_controller.dart';
+// import 'controllers/settings_controller.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       
       // Localization
       translations: AppTranslations(),
-      locale: Locale('en', 'US'),
+      locale: Locale('ar', 'SA'), // Arabic as default
       fallbackLocale: Locale('en', 'US'),
       
       // Routes

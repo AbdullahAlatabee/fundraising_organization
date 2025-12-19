@@ -66,6 +66,11 @@ class AppTranslations extends Translations {
           'select_donor': 'Select Donor',
           'type': 'Type',
           'activity_logs': 'Activity Logs',
+          'error': 'Error',
+          'success': 'Success',
+          'name_required': 'Name is required',
+          'profile_updated': 'Profile updated successfully',
+          'update_failed': 'Failed to update profile',
         },
         'ar_SA': {
           'app_name': 'إدارة الجمعية الخيرية',
@@ -130,6 +135,11 @@ class AppTranslations extends Translations {
           'select_donor': 'اختر المتبرع',
           'type': 'النوع',
           'activity_logs': 'سجلات النشاط',
+          'error': 'خطأ',
+          'success': 'نجح',
+          'name_required': 'الاسم مطلوب',
+          'profile_updated': 'تم تحديث الملف الشخصي بنجاح',
+          'update_failed': 'فشل تحديث الملف الشخصي',
         },
       };
 }

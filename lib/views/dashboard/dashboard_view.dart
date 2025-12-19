@@ -24,7 +24,7 @@ class DashboardView extends StatelessWidget {
           // Stats Cards
           Row(
             children: [
-              Expanded(child: _buildStatCard('cases'.tr, caseController.cases.length.toString(), Icons.folder, Colors.orange)),
+              Expanded(child: Obx(() => _buildStatCard('cases'.tr, caseController.cases.length.toString(), Icons.folder, Colors.orange))),
               SizedBox(width: 16),
               Expanded(child: Obx(() => _buildStatCard('donors'.tr, donorController.donors.length.toString(), Icons.people, Colors.blue))),
             ],
@@ -65,7 +65,7 @@ class DashboardView extends StatelessWidget {
   }
 
   Widget _buildStatCard(String title, String value, IconData icon, Color color) {
-    return Obx(() => Card( // Obx here just in case parent rebuilds, but mostly value handles it if it's obx
+    return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
@@ -81,6 +81,6 @@ class DashboardView extends StatelessWidget {
           ],
         ),
       ),
-    ));
+    );
   }
 }

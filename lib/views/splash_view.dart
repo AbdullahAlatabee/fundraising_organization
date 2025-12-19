@@ -57,8 +57,9 @@ class _SplashViewState extends State<SplashView> {
             Text(
               'إعداد المهندس / عبدالله حسان العتابي',
               style: TextStyle(
-                fontSize: 16, 
-                color: Colors.white70,
+                fontSize: 20, 
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
                 fontFamily: 'Arial' // Or default, assuming readable
               ),
               textDirection: TextDirection.rtl,
@@ -67,8 +68,9 @@ class _SplashViewState extends State<SplashView> {
             Text(
               'إشراف المهندس / سليمان الشوصي',
               style: TextStyle(
-                fontSize: 16, 
-                color: Colors.white70
+                fontSize: 20, 
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
               ),
               textDirection: TextDirection.rtl,
             ),

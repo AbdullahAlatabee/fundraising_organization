@@ -5,12 +5,12 @@ import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
 import 'dart:io';
 
-class ProfileView extends GetView<ProfileController> {
+class ProfileView extends StatelessWidget {
   const ProfileView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    // We access AuthController for logout, logic in ProfileController for fields
+    final controller = Get.find<ProfileController>();
     final authController = Get.find<AuthController>();
     
     return SingleChildScrollView(
@@ -37,13 +37,16 @@ class ProfileView extends GetView<ProfileController> {
                     backgroundColor: Colors.grey[300],
                     backgroundImage: image,
                     child: image == null 
-                        ? Text(authController.currentUser.value?.name[0].toUpperCase() ?? 'U', 
-                              style: TextStyle(fontSize: 40, color: Colors.grey[800])) 
+                        ? Text(
+                            authController.currentUser.value?.name[0].toUpperCase() ?? 'U', 
+                            style: TextStyle(fontSize: 40, color: Colors.grey[800])
+                          ) 
                         : null,
                   );
                 }),
-                Obx(() => controller.isEditing.value 
-                  ? Positioned(
+                Obx(() {
+                  if (controller.isEditing.value) {
+                    return Positioned(
                       bottom: 0,
                       right: 0,
                       child: CircleAvatar(
@@ -54,44 +57,61 @@ class ProfileView extends GetView<ProfileController> {
                           onPressed: controller.pickImage,
                         ),
                       ),
-                    )
-                  : SizedBox.shrink()
-                ),
+                    );
+                  }
+                  return SizedBox.shrink();
+                }),
               ],
             ),
           ),
           SizedBox(height: 30),
           
-          // Fields
+          // Name Field
           Obx(() => TextField(
             controller: controller.nameController,
             enabled: controller.isEditing.value,
-            decoration: InputDecoration(labelText: 'name'.tr, prefixIcon: Icon(Icons.person)),
+            decoration: InputDecoration(
+              labelText: 'name'.tr, 
+              prefixIcon: Icon(Icons.person)
+            ),
           )),
           SizedBox(height: 16),
-          Obx(() => TextField(
+          
+          // Email Field (read-only)
+          TextField(
             controller: controller.emailController,
-            enabled: false, // Email read-only
-            decoration: InputDecoration(labelText: 'email'.tr, prefixIcon: Icon(Icons.email)),
-          )),
+            enabled: false,
+            decoration: InputDecoration(
+              labelText: 'email'.tr, 
+              prefixIcon: Icon(Icons.email)
+            ),
+          ),
           SizedBox(height: 16),
-           TextFormField(
+          
+          // Role Field (read-only)
+          TextFormField(
             initialValue: authController.currentUser.value?.role.toUpperCase(),
             enabled: false,
-            decoration: InputDecoration(labelText: 'Role', prefixIcon: Icon(Icons.security)),
+            decoration: InputDecoration(
+              labelText: 'role'.tr, 
+              prefixIcon: Icon(Icons.security)
+            ),
           ),
           SizedBox(height: 30),
           
-          // Actions
+          // Action Buttons
           Obx(() {
             if (controller.isEditing.value) {
-              return controller.isLoading.value 
-                ? CircularProgressIndicator()
-                : ElevatedButton(
-                    onPressed: controller.saveProfile,
-                    child: Text('save'.tr),
-                    style: ElevatedButton.styleFrom(minimumSize: Size(double.infinity, 50)),
-                  );
+              if (controller.isLoading.value) {
+                return CircularProgressIndicator();
+              }
+              return ElevatedButton(
+                onPressed: controller.saveProfile,
+                child: Text('save'.tr),
+                style: ElevatedButton.styleFrom(
+                  minimumSize: Size(double.infinity, 50)
+                ),
+              );
             } else {
               return ElevatedButton(
                 onPressed: () => authController.logout(),
@@ -105,15 +125,20 @@ class ProfileView extends GetView<ProfileController> {
           }),
 
           SizedBox(height: 16),
-          if(!controller.isEditing.value)
-            TextButton.icon(
-              onPressed: () => Get.toNamed(AppRoutes.SETTINGS), 
-              icon: Icon(Icons.settings), 
-              label: Text('settings'.tr)
-            )
+          
+          // Settings Button
+          Obx(() {
+            if (!controller.isEditing.value) {
+              return TextButton.icon(
+                onPressed: () => Get.toNamed(AppRoutes.SETTINGS), 
+                icon: Icon(Icons.settings), 
+                label: Text('settings'.tr)
+              );
+            }
+            return SizedBox.shrink();
+          }),
         ],
       ),
     );
   }
 }
-

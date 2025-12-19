@@ -7,7 +7,7 @@ import '../../routes/app_routes.dart';
 
 import 'dart:io';
 
-class HomeView extends GetView<DonationCaseController> {
+class HomeView extends StatelessWidget {
   const HomeView({Key? key}) : super(key: key);
 
   ImageProvider? _getImageProvider(String? path) {
@@ -21,6 +21,8 @@ class HomeView extends GetView<DonationCaseController> {
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<DonationCaseController>();
+    
     return Obx(() {
       if (controller.isLoading.value) {
         return Center(child: CircularProgressIndicator());

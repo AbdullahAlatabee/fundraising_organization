@@ -8,16 +8,18 @@ import '../dashboard/dashboard_view.dart'; // Need to create this
 import '../../controllers/profile_controller.dart';
 import '../../routes/app_routes.dart';
 
-class MainView extends GetView<MainController> {
+class MainView extends StatelessWidget {
   const MainView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final controller = Get.find<MainController>();
+    
     return Obx(() => Scaffold(
       appBar: AppBar(
-        title: Text(_getTitle()),
+        title: Text(_getTitle(controller.currentIndex.value)),
         centerTitle: true,
-        actions: _buildAppBarActions(),
+        actions: _buildAppBarActions(controller.currentIndex.value),
       ),
       body: IndexedStack(
         index: controller.currentIndex.value,
@@ -38,12 +40,12 @@ class MainView extends GetView<MainController> {
           BottomNavigationBarItem(icon: Icon(Icons.person), label: 'profile'.tr),
         ],
       ),
-      floatingActionButton: _buildFAB(),
+      floatingActionButton: _buildFAB(controller.currentIndex.value),
     ));
   }
 
-  String _getTitle() {
-    switch (controller.currentIndex.value) {
+  String _getTitle(int index) {
+    switch (index) {
       case 0:
         return 'dashboard'.tr;
       case 1:
@@ -57,8 +59,8 @@ class MainView extends GetView<MainController> {
     }
   }
 
-  Widget? _buildFAB() {
-    switch (controller.currentIndex.value) {
+  Widget? _buildFAB(int index) {
+    switch (index) {
       case 1: // Cases tab
         return FloatingActionButton(
           onPressed: () => Get.toNamed(AppRoutes.ADD_CASE),
@@ -74,8 +76,8 @@ class MainView extends GetView<MainController> {
     }
   }
 
-  List<Widget>? _buildAppBarActions() {
-    if (controller.currentIndex.value == 3) { // Profile tab
+  List<Widget>? _buildAppBarActions(int index) {
+    if (index == 3) { // Profile tab
       final profileController = Get.find<ProfileController>();
       return [
         Obx(() => IconButton(
