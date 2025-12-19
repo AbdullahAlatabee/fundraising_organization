@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/settings_controller.dart';
+import '../../routes/app_routes.dart';
 import '../widgets/app_drawer.dart';
 
 class SettingsView extends GetView<SettingsController> {
@@ -38,7 +39,7 @@ class SettingsView extends GetView<SettingsController> {
           ListTile(
             title: Text('Activity Logs (Admin)'),
             leading: Icon(Icons.receipt_long),
-            onTap: () => Get.toNamed('logs'), // Using string or constant
+            onTap: () => Get.toNamed(AppRoutes.LOGS), 
           ),
         ],
       ),

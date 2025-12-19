@@ -1,3 +1,4 @@
+import 'package:fundraising_organization/views/profile/profile_view.dart';
 import 'package:get/get.dart';
 import 'app_routes.dart';
 import '../middleware/auth_middleware.dart';
