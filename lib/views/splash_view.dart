@@ -45,6 +45,34 @@ class _SplashViewState extends State<SplashView> {
           children: [
             Icon(Icons.volunteer_activism, size: 100, color: Colors.white),
             SizedBox(height: 20),
+            Text(
+              'app_name'.tr,
+              style: TextStyle(
+                fontSize: 24, 
+                fontWeight: FontWeight.bold, 
+                color: Colors.white
+              ),
+            ),
+            SizedBox(height: 40),
+            Text(
+              'إعداد المهندس / عبدالله حسان العتابي',
+              style: TextStyle(
+                fontSize: 16, 
+                color: Colors.white70,
+                fontFamily: 'Arial' // Or default, assuming readable
+              ),
+              textDirection: TextDirection.rtl,
+            ),
+            SizedBox(height: 8),
+            Text(
+              'إشراف المهندس / سليمان الشوصي',
+              style: TextStyle(
+                fontSize: 16, 
+                color: Colors.white70
+              ),
+              textDirection: TextDirection.rtl,
+            ),
+             SizedBox(height: 60),
             CircularProgressIndicator(color: Colors.white),
           ],
         ),

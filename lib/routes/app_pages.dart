@@ -1,5 +1,7 @@
 import 'package:fundraising_organization/views/profile/profile_view.dart';
 import 'package:get/get.dart';
+import '../views/main/main_view.dart';
+import '../bindings/main_binding.dart';
 import 'app_routes.dart';
 import '../middleware/auth_middleware.dart';
 import '../bindings/initial_binding.dart'; 
@@ -37,10 +39,12 @@ class AppPages {
       name: AppRoutes.REGISTER,
       page: () => RegisterView(),
     ),
+
+
     GetPage(
       name: AppRoutes.HOME,
-      page: () => HomeView(),
-      binding: HomeBinding(),
+      page: () => MainView(),
+      binding: MainBinding(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(

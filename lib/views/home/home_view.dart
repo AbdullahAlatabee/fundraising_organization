@@ -21,25 +21,20 @@ class HomeView extends GetView<DonationCaseController> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('cases'.tr),
-        actions: [
-          IconButton(icon: Icon(Icons.refresh), onPressed: () => controller.fetchCases()),
-        ],
-      ),
-      // drawer: AppDrawer(), // Removed for BottomNav
-      body: Obx(() {
-        if (controller.isLoading.value) {
-          return Center(child: CircularProgressIndicator());
-        }
-        if (controller.cases.isEmpty) {
-          return Center(child: Text('No active cases'));
-        }
-        return ListView.builder(
-          padding: EdgeInsets.all(16),
-          itemCount: controller.cases.length,
-          itemBuilder: (context, index) {
+    return Obx(() {
+      if (controller.isLoading.value) {
+        return Center(child: CircularProgressIndicator());
+      }
+      if (controller.cases.isEmpty) {
+        return Center(child: Text('No active cases'));
+      }
+      return Column(
+        children: [
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.all(16),
+              itemCount: controller.cases.length,
+              itemBuilder: (context, index) {
             final donationCase = controller.cases[index];
             final percent = donationCase.targetAmount > 0 
                 ? (donationCase.collectedAmount / donationCase.targetAmount) 
@@ -117,13 +112,12 @@ class HomeView extends GetView<DonationCaseController> {
                 ),
               ),
             );
-          },
-        );
-      }),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Get.toNamed(AppRoutes.ADD_CASE), 
-        child: Icon(Icons.add),
-      ),
-    );
+              },
+            ),
+          ),
+          // FloatingActionButton for adding cases
+        ],
+      );
+    });
   }
 }

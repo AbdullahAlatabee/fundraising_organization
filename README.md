@@ -1,16 +1,36 @@
-# fundraising_organization
+# Fundraising Organization
 
-A new Flutter project.
+A complete Flutter application for managing a charity organization. This app allows managing donors, donation cases, and tracking donations, with full offline support.
 
-## Getting Started
+## Project Title
+Fundraising Organization
 
-This project is a starting point for a Flutter application.
+## Description
+A comprehensive mobile application developed using Flutter to assist charity organizations in managing their day-to-day operations. The application supports offline data storage, user authentication, and detailed management of cases and donors.
 
-A few resources to get you started if this is your first Flutter project:
+## Technologies Used
+- Flutter
+- GetX (State Management, Routing, Dependency Injection)
+- SQLite (Local Database)
+- SharedPreferences (Settings Persistence)
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Features
+- **Authentication**: Secure Login and Register system.
+- **Donation Cases Management**: Create, read, update, and track status of donation cases.
+- **Donors Management**: Maintain a database of donors with their history.
+- **Donations Tracking**: Record donations linked to specific cases and donors.
+- **Dashboard**: Visual summary of donations and cases.
+- **Localization**: Full support for Arabic and English languages.
+- **Theming**: Light and Dark mode support.
+- **Offline First**: Works completely offline without an internet connection.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## Developer Information
+**Developed By:** Eng. Abdullah Hassan Al-Atabi
+**Supervised By:** Eng. Suleiman Al-Shousi
+
+(Arabic)
+إعداد المهندس / عبدالله حسان العتابي
+إشراف المهندس / سليمان الشوصي
+
+## Thank You
+Thank you for using our application. We hope it serves your organization well in its noble mission.
