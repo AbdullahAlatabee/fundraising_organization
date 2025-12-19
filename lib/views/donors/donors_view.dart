@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/donor_controller.dart';
 import '../../routes/app_routes.dart';
-import '../widgets/app_drawer.dart';
 
 class DonorsView extends GetView<DonorController> {
   final TextEditingController searchController = TextEditingController();
@@ -13,7 +12,7 @@ class DonorsView extends GetView<DonorController> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text('donors'.tr)),
-      drawer: AppDrawer(),
+      // drawer: AppDrawer(),
       body: Column(
         children: [
           Padding(
@@ -21,7 +20,7 @@ class DonorsView extends GetView<DonorController> {
             child: TextField(
               controller: searchController,
               decoration: InputDecoration(
-                labelText: 'Search Donor',
+                labelText: 'search_donor'.tr,
                 prefixIcon: Icon(Icons.search),
                 suffixIcon: IconButton(icon: Icon(Icons.clear), onPressed: () {
                    searchController.clear();

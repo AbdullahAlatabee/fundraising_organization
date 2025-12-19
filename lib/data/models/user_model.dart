@@ -5,6 +5,7 @@ class User {
   final String password;
   final String role; // 'admin', 'staff'
   final String createdAt;
+  final String? imagePath;
 
   User({
     this.id,
@@ -13,6 +14,7 @@ class User {
     required this.password,
     required this.role,
     required this.createdAt,
+    this.imagePath,
   });
 
   Map<String, dynamic> toMap() {
@@ -23,6 +25,7 @@ class User {
       'password': password,
       'role': role,
       'created_at': createdAt,
+      'image_path': imagePath,
     };
   }
 
@@ -34,6 +37,7 @@ class User {
       password: map['password'],
       role: map['role'],
       createdAt: map['created_at'],
+      imagePath: map['image_path'],
     );
   }
 }

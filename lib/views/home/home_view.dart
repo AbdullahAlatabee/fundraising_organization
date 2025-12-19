@@ -3,21 +3,32 @@ import 'package:get/get.dart';
 import '../../controllers/donation_case_controller.dart';
 import '../../controllers/auth_controller.dart';
 import '../../routes/app_routes.dart';
-import '../widgets/app_drawer.dart';
+
+
+import 'dart:io';
 
 class HomeView extends GetView<DonationCaseController> {
   const HomeView({Key? key}) : super(key: key);
+
+  ImageProvider? _getImageProvider(String? path) {
+    if (path == null || path.isEmpty) return null;
+    if (Uri.parse(path).isAbsolute && path.startsWith('http')) {
+      return NetworkImage(path);
+    } else {
+      return FileImage(File(path));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('dashboard'.tr),
+        title: Text('cases'.tr),
         actions: [
           IconButton(icon: Icon(Icons.refresh), onPressed: () => controller.fetchCases()),
         ],
       ),
-      drawer: AppDrawer(),
+      // drawer: AppDrawer(), // Removed for BottomNav
       body: Obx(() {
         if (controller.isLoading.value) {
           return Center(child: CircularProgressIndicator());
@@ -34,6 +45,8 @@ class HomeView extends GetView<DonationCaseController> {
                 ? (donationCase.collectedAmount / donationCase.targetAmount) 
                 : 0.0;
             
+            final imageProvider = _getImageProvider(donationCase.imagePath);
+
             return Card(
               margin: EdgeInsets.only(bottom: 16),
               elevation: 4,
@@ -50,15 +63,15 @@ class HomeView extends GetView<DonationCaseController> {
                       decoration: BoxDecoration(
                         color: Colors.grey[300],
                         borderRadius: BorderRadius.vertical(top: Radius.circular(12)),
-                        image: donationCase.imagePath != null
+                        image: imageProvider != null
                           ? DecorationImage(
-                              image: NetworkImage(donationCase.imagePath!), // Or FileImage if local
+                              image: imageProvider,
                               fit: BoxFit.cover,
-                              onError: (_, __) => Icon(Icons.broken_image), // Fallback
+                              onError: (_, __) => Icon(Icons.broken_image), // This might not work in DecorationImage, but handled by provider error usually
                             ) 
                           : null,
                       ),
-                      child: donationCase.imagePath == null 
+                      child: imageProvider == null 
                           ? Icon(Icons.image, size: 50, color: Colors.grey[500]) 
                           : null,
                     ),

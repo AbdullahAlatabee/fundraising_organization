@@ -23,7 +23,18 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(
+      path, 
+      version: 2, 
+      onCreate: _createDB,
+      onUpgrade: _onUpgrade,
+    );
+  }
+
+  Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('ALTER TABLE users ADD COLUMN image_path TEXT');
+    }
   }
 
   Future _createDB(Database db, int version) async {
@@ -40,7 +51,8 @@ class DatabaseHelper {
       email $textType UNIQUE,
       password $textType,
       role $textType,
-      created_at $textType
+      created_at $textType,
+      image_path $textNullable
     )
     ''');
 
@@ -114,11 +126,20 @@ class DatabaseHelper {
     return await db.insert('users', user.toMap());
   }
 
+  Future<int> updateUser(User user) async {
+    final db = await instance.database;
+    return await db.update(
+      'users', 
+      user.toMap(),
+      where: 'id = ?',
+      whereArgs: [user.id],
+    );
+  }
+
   Future<User?> getUserByEmail(String email) async {
     final db = await instance.database;
     final maps = await db.query(
       'users',
-      columns: ['id', 'name', 'email', 'password', 'role', 'created_at'],
       where: 'email = ?',
       whereArgs: [email],
     );

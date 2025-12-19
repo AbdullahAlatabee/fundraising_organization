@@ -6,6 +6,8 @@ import '../../controllers/donor_controller.dart';
 import '../../data/models/donation_model.dart';
 import '../../routes/app_routes.dart';
 
+import 'dart:io';
+
 class CaseDetailsView extends StatefulWidget {
   const CaseDetailsView({Key? key}) : super(key: key);
 
@@ -35,6 +37,17 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
     return donor?.fullName ?? 'Unknown Donor';
   }
 
+  Widget _buildImage(String? path) {
+    if (path == null || path.isEmpty) {
+      return Container(height: 200, color: Colors.grey[300], child: Icon(Icons.image, size: 50));
+    }
+    if (Uri.parse(path).isAbsolute && path.startsWith('http')) {
+      return Image.network(path, height: 200, width: double.infinity, fit: BoxFit.cover, errorBuilder: (_,__,___) => Icon(Icons.broken_image));
+    } else {
+      return Image.file(File(path), height: 200, width: double.infinity, fit: BoxFit.cover, errorBuilder: (_,__,___) => Icon(Icons.broken_image));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,14 +56,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-             if (donationCase.imagePath != null && donationCase.imagePath!.isNotEmpty)
-              Image.network(
-                donationCase.imagePath!, 
-                height: 200, 
-                width: double.infinity, 
-                fit: BoxFit.cover,
-                errorBuilder: (_,__,___) => Container(height: 200, color: Colors.grey, child: Icon(Icons.broken_image)),
-              ),
+             _buildImage(donationCase.imagePath),
               
             Padding(
               padding: const EdgeInsets.all(16.0),
@@ -64,8 +70,8 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                   
                   // Progress
                   Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-                    Text('Target: \$${donationCase.targetAmount}'),
-                    Text('Collected: \$${donationCase.collectedAmount}'),
+                    Text('${'target'.tr}: \$${donationCase.targetAmount}'),
+                    Text('${'collected'.tr}: \$${donationCase.collectedAmount}'),
                   ]),
                   SizedBox(height: 4),
                   LinearProgressIndicator(
@@ -74,7 +80,7 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                   ),
                   
                   SizedBox(height: 24),
-                  Text('Donations', style: Theme.of(context).textTheme.titleLarge),
+                  Text('donations'.tr, style: Theme.of(context).textTheme.titleLarge),
                   Divider(),
                 ],
               ),
@@ -98,10 +104,9 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
-          // Navigate to add donation with this case pre-selected
           Get.toNamed(AppRoutes.ADD_DONATION, arguments: {'case': donationCase});
         }, 
-        label: Text('Donate'),
+        label: Text('donate'.tr),
         icon: Icon(Icons.volunteer_activism),
       ),
     );
