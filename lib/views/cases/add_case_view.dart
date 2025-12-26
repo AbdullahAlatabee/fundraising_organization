@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../controllers/donation_case_controller.dart';
 import 'dart:io';
+import '../widgets/map_picker.dart';
+import 'package:latlong2/latlong.dart';
 
 class AddCaseView extends GetView<DonationCaseController> {
   final TextEditingController titleController = TextEditingController();
@@ -11,6 +13,33 @@ class AddCaseView extends GetView<DonationCaseController> {
 
   AddCaseView({Key? key}) : super(key: key) {
     controller.clearForm(); // Reset form state
+    if (Get.arguments != null && Get.arguments is Map) {
+       final args = Get.arguments as Map;
+       titleController.text = args['name'] ?? '';
+       descController.text = args['description'] ?? '';
+       if (args['imagePath'] != null) {
+          controller.pickedImagePath.value = args['imagePath'];
+       }
+       if (args['latitude'] != null && args['longitude'] != null) {
+          controller.setLocation(LatLng(args['latitude'], args['longitude']));
+       }
+    }
+  }
+
+  void _showMapPicker(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      builder: (ctx) => Container(
+        height: Get.height * 0.8,
+        child: MapPicker(
+          initialLocation: controller.pickedLocation.value,
+          onLocationPicked: (location) {
+            controller.setLocation(location);
+          },
+        ),
+      ),
+    );
   }
 
   @override
@@ -74,6 +103,32 @@ class AddCaseView extends GetView<DonationCaseController> {
               decoration: InputDecoration(labelText: 'image_url'.tr, border: OutlineInputBorder()),
             ),
             SizedBox(height: 16),
+            Obx(() {
+              final loc = controller.pickedLocation.value;
+              return Column(
+                children: [
+                  if (loc != null)
+                    Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.location_on, color: Colors.blue),
+                        title: Text('Location Selected'),
+                        subtitle: Text('${loc.latitude.toStringAsFixed(4)}, ${loc.longitude.toStringAsFixed(4)}'),
+                        trailing: IconButton(icon: Icon(Icons.edit), onPressed: () => _showMapPicker(context)),
+                      ),
+                    ),
+                  ElevatedButton.icon(
+                    onPressed: () => _showMapPicker(context),
+                    icon: const Icon(Icons.map),
+                    label: Text(loc == null ? 'Select Location on Map' : 'Change Location'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: loc != null ? Colors.green : null,
+                      foregroundColor: loc != null ? Colors.white : null,
+                    ),
+                  ),
+                ],
+              );
+            }),
+            SizedBox(height: 16),
             Obx(() => controller.isLoading.value 
               ? CircularProgressIndicator()
               : ElevatedButton(
@@ -90,7 +145,24 @@ class AddCaseView extends GetView<DonationCaseController> {
                     // I will pass text field value as 'imagePath' argument. Controller will fallback to 'pickedImagePath.value' if argument is null.
                     String? finalPath = imageController.text.isNotEmpty ? imageController.text : null;
                     
-                    await controller.addCase(title, desc, amount, finalPath);
+                    await controller.addCase(
+                      title, 
+                      desc, 
+                      amount, 
+                      finalPath,
+                      lat: controller.pickedLocation.value?.latitude,
+                      lng: controller.pickedLocation.value?.longitude,
+                      hasLoc: controller.pickedLocation.value != null
+                    );
+                    
+                    // If this was from a request (check Get.arguments), we should update the request status.
+                    // But Logic in View is tricky. Ideally Controller handles this if we passed requestId.
+                    // Let's pass 'requestId' via arguments and handle it here or in Controller.
+                    // Controller logic 'addCase' is generic.
+                    // I'll add logic here:
+                    if (Get.arguments != null && Get.arguments is Map && Get.arguments['requestId'] != null) {
+                       await controller.completeRequest(Get.arguments['requestId']);
+                    }
                     Get.back();
                   }, 
                   child: Text('save_case'.tr)

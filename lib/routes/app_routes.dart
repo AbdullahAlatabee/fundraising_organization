@@ -14,4 +14,7 @@ class AppRoutes {
   static const PROFILE = '/profile';
   static const SETTINGS = '/settings';
   static const LOGS = '/logs';
+  static const PUBLIC_REQUEST = '/public_request';
+  static const ADMIN_REQUESTS = '/admin_requests';
+  static const ADMIN_REQUEST_DETAILS = '/admin_request_details';
 }

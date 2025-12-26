@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
       
       // Localization
       translations: AppTranslations(),
-      locale: Locale('ar', 'SA'), // Arabic as default
+      locale: Locale('ar', 'SA'), 
       fallbackLocale: Locale('en', 'US'),
       
       // Routes

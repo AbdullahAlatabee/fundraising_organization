@@ -1,11 +1,12 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
+// import 'package:path_provider/path_provider.dart';
 import '../models/user_model.dart';
 import '../models/donor_model.dart';
 import '../models/donation_case_model.dart';
 import '../models/donation_model.dart';
 import '../models/activity_log_model.dart';
+import '../models/donation_request_model.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._init();
@@ -25,7 +26,7 @@ class DatabaseHelper {
 
     return await openDatabase(
       path, 
-      version: 2, 
+      version: 3, 
       onCreate: _createDB,
       onUpgrade: _onUpgrade,
     );
@@ -34,6 +35,33 @@ class DatabaseHelper {
   Future _onUpgrade(Database db, int oldVersion, int newVersion) async {
     if (oldVersion < 2) {
       await db.execute('ALTER TABLE users ADD COLUMN image_path TEXT');
+    }
+    if (oldVersion < 3) {
+      // Add columns to donation_cases
+      await db.execute('ALTER TABLE donation_cases ADD COLUMN latitude REAL');
+      await db.execute('ALTER TABLE donation_cases ADD COLUMN longitude REAL');
+      await db.execute('ALTER TABLE donation_cases ADD COLUMN address_description TEXT');
+      await db.execute('ALTER TABLE donation_cases ADD COLUMN has_location INTEGER DEFAULT 0');
+
+      // Create donation_requests table
+      const idType = 'INTEGER PRIMARY KEY AUTOINCREMENT';
+      const textType = 'TEXT NOT NULL';
+      const realType = 'REAL NOT NULL';
+      const textNullable = 'TEXT';
+      
+      await db.execute('''
+      CREATE TABLE donation_requests (
+        id $idType,
+        name $textType,
+        phone $textType,
+        description $textType,
+        image_path $textNullable,
+        latitude $realType,
+        longitude $realType,
+        status $textType,
+        created_at $textType
+      )
+      ''');
     }
   }
 
@@ -80,6 +108,11 @@ class DatabaseHelper {
       image_path $textNullable,
       created_by $integerType,
       created_at $textType,
+
+      latitude $realType,
+      longitude $realType,
+      address_description $textNullable,
+      has_location $integerType DEFAULT 0,
       FOREIGN KEY (created_by) REFERENCES users (id)
     )
     ''');
@@ -116,6 +149,20 @@ class DatabaseHelper {
       entity $textType,
       timestamp $textType,
       FOREIGN KEY (user_id) REFERENCES users (id)
+    )
+    ''');
+
+    await db.execute('''
+    CREATE TABLE donation_requests (
+      id $idType,
+      name $textType,
+      phone $textType,
+      description $textType,
+      image_path $textNullable,
+      latitude $realType,
+      longitude $realType,
+      status $textType,
+      created_at $textType
     )
     ''');
   }
@@ -202,7 +249,7 @@ class DatabaseHelper {
   Future<int> createCase(DonationCase dCase) async {
     final db = await instance.database;
     int id = await db.insert('donation_cases', dCase.toMap());
-    await _logActivity(dCase.createdBy, 'Create', 'Case ID: $id');
+    await _logActivity(dCase.createdBy as int, 'Create', 'Case ID: $id');
     return id;
   }
 
@@ -306,6 +353,39 @@ class DatabaseHelper {
     final db = await instance.database;
     final result = await db.query('activity_logs', orderBy: 'timestamp DESC');
     return result.map((json) => ActivityLog.fromMap(json)).toList();
+  }
+
+  // --- REQUESTS ---
+  Future<int> createRequest(DonationRequest request) async {
+    final db = await instance.database;
+    return await db.insert('donation_requests', request.toMap());
+  }
+
+  Future<List<DonationRequest>> getAllRequests() async {
+    final db = await instance.database;
+    final result = await db.query('donation_requests', orderBy: 'created_at DESC');
+    return result.map((json) => DonationRequest.fromMap(json)).toList();
+  }
+
+  Future<List<DonationRequest>> getPendingRequests() async {
+    final db = await instance.database;
+    final result = await db.query(
+      'donation_requests', 
+      where: 'status = ?', 
+      whereArgs: ['pending'],
+      orderBy: 'created_at DESC'
+    );
+    return result.map((json) => DonationRequest.fromMap(json)).toList();
+  }
+
+  Future<int> updateRequestStatus(int id, String status) async {
+    final db = await instance.database;
+    return await db.update(
+      'donation_requests',
+      {'status': status},
+      where: 'id = ?',
+      whereArgs: [id],
+    );
   }
 
   Future<void> close() async {

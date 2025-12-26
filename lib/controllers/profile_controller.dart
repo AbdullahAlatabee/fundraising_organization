@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import '../data/database/database_helper.dart';
 import '../data/models/user_model.dart';
 import 'auth_controller.dart';
-import 'dart:io';
+// import 'dart:io';
 
 class ProfileController extends GetxController {
   final DatabaseHelper _dbHelper = DatabaseHelper.instance;

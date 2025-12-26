@@ -85,6 +85,11 @@ class LoginView extends GetView<AuthController> {
                       onPressed: () => Get.toNamed(AppRoutes.REGISTER),
                       child: Text('register'.tr),
                     ),
+                    TextButton.icon(
+                      onPressed: () => Get.toNamed(AppRoutes.PUBLIC_REQUEST),
+                      icon: Icon(Icons.help_outline),
+                      label: Text('Need Help? Submit Request', style: TextStyle(color: Colors.grey[700])),
+                    ),
                   ],
                 ),
               ),

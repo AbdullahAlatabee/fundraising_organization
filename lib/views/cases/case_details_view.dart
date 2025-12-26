@@ -7,6 +7,9 @@ import '../../data/models/donation_model.dart';
 import '../../routes/app_routes.dart';
 
 import 'dart:io';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import '../widgets/full_screen_map.dart';
 
 class CaseDetailsView extends StatefulWidget {
   const CaseDetailsView({Key? key}) : super(key: key);
@@ -78,6 +81,50 @@ class _CaseDetailsViewState extends State<CaseDetailsView> {
                     value: donationCase.collectedAmount / donationCase.targetAmount,
                     minHeight: 10,
                   ),
+                  
+                  if (donationCase.hasLocation && donationCase.latitude != null && donationCase.longitude != null) ...[
+                    SizedBox(height: 24),
+                    Text('Location', style: Theme.of(context).textTheme.titleLarge),
+                    SizedBox(height: 8),
+                    GestureDetector(
+                      onTap: () {
+                        Get.to(() => FullScreenMap(latitude: donationCase.latitude!, longitude: donationCase.longitude!));
+                      },
+                      child: Container(
+                        height: 200,
+                        decoration: BoxDecoration(
+                          border: Border.all(color: Colors.grey.shade300),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(8),
+                          child: IgnorePointer( // Ignore map interactions so tap goes to GestureDetector
+                             ignoring: true, 
+                             child: FlutterMap(
+                               options: MapOptions(
+                                 initialCenter: LatLng(donationCase.latitude!, donationCase.longitude!),
+                                 initialZoom: 13,
+                               ),
+                               children: [
+                                 TileLayer(
+                                   urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                                   userAgentPackageName: 'com.charity.organization',
+                                 ),
+                                 MarkerLayer(markers: [
+                                   Marker(
+                                     point: LatLng(donationCase.latitude!, donationCase.longitude!), 
+                                     width: 80,
+                                     height: 80,
+                                     child: Icon(Icons.location_on, color: Colors.red, size: 40)
+                                   )
+                                 ])
+                               ]
+                             ),
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
                   
                   SizedBox(height: 24),
                   Text('donations'.tr, style: Theme.of(context).textTheme.titleLarge),

@@ -7,6 +7,7 @@ import '../profile/profile_view.dart';
 import '../dashboard/dashboard_view.dart'; // Need to create this
 import '../../controllers/profile_controller.dart';
 import '../../routes/app_routes.dart';
+import '../../controllers/auth_controller.dart';
 
 class MainView extends StatelessWidget {
   const MainView({Key? key}) : super(key: key);
@@ -77,15 +78,29 @@ class MainView extends StatelessWidget {
   }
 
   List<Widget>? _buildAppBarActions(int index) {
+    List<Widget> actions = [];
+    
+    // Admin Check for Requests
+    final authController = Get.find<AuthController>(); // AuthController should be available
+    if (authController.currentUser.value?.role == 'admin') {
+       actions.add(
+         IconButton(
+           icon: Icon(Icons.pending_actions),
+           tooltip: 'Pending Requests',
+           onPressed: () => Get.toNamed(AppRoutes.ADMIN_REQUESTS),
+         )
+       );
+    }
+
     if (index == 3) { // Profile tab
       final profileController = Get.find<ProfileController>();
-      return [
+      actions.add(
         Obx(() => IconButton(
           icon: Icon(profileController.isEditing.value ? Icons.close : Icons.edit),
           onPressed: profileController.toggleEdit,
         ))
-      ];
+      );
     }
-    return null;
+    return actions.isNotEmpty ? actions : null;
   }
 }

@@ -1,17 +1,19 @@
+import 'package:fundraising_organization/bindings/public_request_binding.dart';
 import 'package:fundraising_organization/views/profile/profile_view.dart';
+import 'package:fundraising_organization/views/requests/public_request_view.dart';
 import 'package:get/get.dart';
 import '../views/main/main_view.dart';
 import '../bindings/main_binding.dart';
 import 'app_routes.dart';
 import '../middleware/auth_middleware.dart';
-import '../bindings/initial_binding.dart'; 
+// import '../bindings/initial_binding.dart'; 
 import '../bindings/home_binding.dart';
 import '../bindings/donor_binding.dart';
 import '../bindings/donation_binding.dart';
 
 import '../views/auth/login_view.dart';
 import '../views/auth/register_view.dart';
-import '../views/home/home_view.dart';
+// import '../views/home/home_view.dart';
 import '../views/cases/add_case_view.dart';
 import '../views/cases/case_details_view.dart';
 import '../views/donors/donors_view.dart';
@@ -22,6 +24,9 @@ import '../views/donations/add_donation_view.dart';
 import '../views/settings/settings_view.dart';
 import '../views/settings/activity_logs_view.dart';
 import '../views/splash_view.dart';
+import '../views/requests/admin_request_list_view.dart';
+import '../views/requests/admin_request_detail_view.dart';
+import '../bindings/admin_request_binding.dart';
 
 class AppPages {
   static const INITIAL = AppRoutes.SPLASH;
@@ -102,6 +107,24 @@ class AppPages {
     GetPage(
       name: AppRoutes.LOGS,
       page: () => ActivityLogsView(),
+      middlewares: [AuthMiddleware()],
+    ),
+
+    GetPage(
+      name: AppRoutes.PUBLIC_REQUEST,
+      page: () => PublicRequestView(),
+      binding: PublicRequestBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.ADMIN_REQUESTS,
+      page: () => AdminRequestListView(),
+      binding: AdminRequestBinding(),
+      middlewares: [AuthMiddleware()],
+    ),
+     GetPage(
+      name: AppRoutes.ADMIN_REQUEST_DETAILS,
+      page: () => AdminRequestDetailView(),
+      binding: AdminRequestBinding(),
       middlewares: [AuthMiddleware()],
     ),
   ];
